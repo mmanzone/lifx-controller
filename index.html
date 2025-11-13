@@ -33,6 +33,16 @@
             transition: background-color 0.3s, color 0.3s;
         }
 
+        #theme-switcher {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+        }
+
+        .light-theme #theme-switcher {
+            background-color: var(--card-bg-color);
+        }
+
         /* Custom styles for the color wheel canvas */
         #color-wheel-canvas {
             border-radius: 0.5rem;
@@ -50,7 +60,7 @@
             background: var(--primary-accent);
             cursor: pointer;
             box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
-            border: 3px solid #e5e7eb; /* Light border for dark theme contrast */
+            border: 3px solid var(--card-bg-color);
         }
         input[type=range]::-moz-range-thumb {
             width: 18px;
@@ -59,19 +69,21 @@
             background: var(--primary-accent);
             cursor: pointer;
             box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
-            border: 3px solid #e5e7eb;
+            border: 3px solid var(--card-bg-color);
         }
         
         /* Thicker slider track definition */
         input[type=range]::-webkit-slider-runnable-track {
             height: 12px; /* Thicker track height */
-            background: #4b5563; /* Gray-600 background for track */
+            background: var(--bg-color);
             border-radius: 6px;
+            border: 1px solid var(--border-color);
         }
         input[type=range]::-moz-range-track {
             height: 12px;
-            background: #4b5563;
+            background: var(--bg-color);
             border-radius: 6px;
+            border: 1px solid var(--border-color);
         }
 
         /* Base light card background style */
@@ -143,7 +155,7 @@
             <h1 class="text-3xl font-bold text-center">LIFX Home Control</h1>
             <div class="flex items-center gap-2">
                 <span class="text-sm font-medium" style="color: var(--muted-text-color);">Theme:</span>
-                <select id="theme-switcher" class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                <select id="theme-switcher" class="text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                     <option value="system">System</option>
                     <option value="light">Light</option>
                     <option value="dark">Dark</option>
@@ -669,7 +681,7 @@
                 sliderContainer.classList.add('hidden');
                 colorOverlay.style.backgroundColor = 'transparent';
                 colorOverlay.style.opacity = '0';
-                statusPillElement.innerHTML = `<span class="text-xs font-semibold px-3 py-1 rounded-full bg-red-800 text-red-300">OFF</span>`;
+                statusPillElement.innerHTML = `<span class="text-xs font-semibold px-3 py-1 rounded-full" style="background-color: var(--bg-color); color: var(--muted-text-color);">OFF</span>`;
                 colorButton.classList.add('opacity-50', 'cursor-not-allowed');
                 colorButton.classList.remove('hover:scale-105');
                 if (lightNameElement) lightNameElement.classList.add(body.classList.contains('light-theme') ? 'text-gray-900' : 'text-gray-100');
@@ -712,7 +724,7 @@
             if (!isConnected) {
                 initialPillHtml = `<span class="text-xs font-semibold px-3 py-1 rounded-full bg-red-800 text-red-300 flex items-center gap-1"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.257 3.34c.52-1.258 2.45-1.258 2.97 0l6.234 15.01c.52 1.258-.39 2.47-1.554 2.47H3.577c-1.164 0-2.074-1.212-1.554-2.47L8.257 3.34zM10 13a1 1 0 100-2 1 1 0 000 2zm0-5a1 1 0 00-1 1v2a1 1 0 102 0V9a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>OFFLINE</span>`;
             } else if (isOff) {
-                initialPillHtml = `<span class="text-xs font-semibold px-3 py-1 rounded-full bg-red-800 text-red-300">OFF</span>`;
+                initialPillHtml = `<span class="text-xs font-semibold px-3 py-1 rounded-full" style="background-color: var(--bg-color); color: var(--muted-text-color);">OFF</span>`;
             } else {
                 sliderVisibility = '';
                 initialTextColorClass = getTextColorClass(light.brightness);
@@ -782,8 +794,8 @@
                         <h3 class="text-2xl font-bold mb-3 sm:mb-0">${roomName}</h3>
                         <div class="flex items-center gap-3">
                             <span class="text-sm font-medium" style="color: var(--muted-text-color);">All Lights:</span>
-                            <button title="Toggle Room Power" data-room-name="${roomName}" class="room-power-toggle p-2 w-10 h-10 rounded-full shadow-md transition transform hover:scale-105 ${isAllOff ? 'bg-gray-600' : 'bg-green-500'}">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white mx-auto" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9 5a1 1 0 112 0v5a1 1 0 11-2 0V5z" clip-rule="evenodd" /></svg>
+                            <button title="Toggle Room Power" data-room-name="${roomName}" class="room-power-toggle p-2 w-10 h-10 rounded-full shadow-md transition transform hover:scale-105" style="background-color: ${isAllOff ? 'var(--border-color)' : '#22c55e'}; color: ${isAllOff ? 'var(--text-color)' : 'white'};">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mx-auto" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9 5a1 1 0 112 0v5a1 1 0 11-2 0V5z" clip-rule="evenodd" /></svg>
                             </button>
                             <button title="Set Room Colour" data-room-name="${roomName}" class="room-color-picker p-2 w-10 h-10 rounded-full shadow-md transition transform hover:scale-105" style="background-color: ${isAllOff ? 'var(--border-color)' : roomColorStyle};">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white mx-auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10a10 10 0 0 0-10-10z"/><path d="M18 10a6 6 0 0 0-6-6v6h6z"/><path d="M12 18a6 6 0 0 1-6-6h6z"/></svg>
@@ -796,7 +808,7 @@
                           </label>
                           <input type="range" data-room-name="${roomName}" min="0" max="100" value="${avgBrightness}" class="w-full h-3 bg-gray-600 rounded-lg appearance-none cursor-pointer room-brightness-slider">
                     </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 mt-4">
                         ${lightsInRoom.map(renderLightCard).join('')}
                     </div>
                 </div>
@@ -1031,8 +1043,8 @@
             
             if (!powerBtn || !colorBtn || !sliderContainer) return;
             
-            powerBtn.classList.toggle('bg-gray-600', isAllOff);
-            powerBtn.classList.toggle('bg-green-500', !isAllOff);
+            powerBtn.style.backgroundColor = isAllOff ? 'var(--border-color)' : '#22c55e';
+            powerBtn.style.color = isAllOff ? 'var(--text-color)' : 'white';
             
             if (isAllOff) {
                 colorBtn.style.backgroundColor = 'var(--border-color)';
