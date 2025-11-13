@@ -183,10 +183,6 @@
 
             <!-- Tab Content -->
             <div id="tab-content-rooms" class="tab-content active">
-                <h2 class="text-2xl font-semibold mb-6 flex justify-between items-center" style="color: var(--text-color);">
-                    Rooms Dashboard
-                    <span id="refresh-status-rooms" class="text-sm" style="color: var(--muted-text-color);"></span>
-                </h2>
                 <div id="rooms-list" class="space-y-8">
                     <!-- Room sections will be loaded here dynamically -->
                 </div>
@@ -194,15 +190,14 @@
             </div>
 
             <div id="tab-content-all-lights" class="tab-content">
-                <h2 class="text-2xl font-semibold mb-6 flex justify-between items-center" style="color: var(--text-color);">
-                    All Lights Dashboard
-                    <span id="refresh-status-all" class="text-sm" style="color: var(--muted-text-color);"></span>
-                </h2>
                 <div id="lights-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     <!-- Light cards will be loaded here dynamically -->
                 </div>
                 <p id="no-lights-message" class="mt-8 hidden text-center p-4 rounded-lg" style="background-color: var(--bg-color); color: var(--muted-text-color);">No LIFX lights found for this account. Please check your personal token.</p>
             </div>
+            
+            <!-- Footer Refresh Status -->
+            <div id="refresh-status" class="text-center text-sm mt-8" style="color: var(--muted-text-color);"></div>
         </div>
     </div>
 
@@ -275,8 +270,7 @@
         const messageBoxTitle = document.getElementById('message-box-title');
         const messageBoxContent = document.getElementById('message-box-content');
         const messageBoxCloseBtn = document.getElementById('message-box-close');
-        const refreshStatusRoomsSpan = document.getElementById('refresh-status-rooms');
-        const refreshStatusAllSpan = document.getElementById('refresh-status-all');
+        const refreshStatusSpan = document.getElementById('refresh-status');
         
         // Tab elements
         const tabRooms = document.getElementById('tab-rooms');
@@ -534,7 +528,7 @@
                 return;
             }
 
-            const statusTarget = isAutoRefresh ? (tabContentRooms.classList.contains('active') ? refreshStatusRoomsSpan : refreshStatusAllSpan) : apiKeyStatus;
+            const statusTarget = isAutoRefresh ? refreshStatusSpan : apiKeyStatus;
 
             if (!isAutoRefresh) {
                 statusTarget.textContent = 'Fetching lights...';
@@ -565,8 +559,7 @@
                     startAutoRefresh();
                 } else {
                     const now = new Date().toLocaleTimeString();
-                    refreshStatusRoomsSpan.textContent = `Last refreshed: ${now}`;
-                    refreshStatusAllSpan.textContent = `Last refreshed: ${now}`;
+                    refreshStatusSpan.textContent = `Last refreshed: ${now}`;
                 }
 
             } catch (error) {
@@ -582,8 +575,7 @@
                     lightControlSection.classList.add('hidden');
                 } else {
                     const now = new Date().toLocaleTimeString();
-                    refreshStatusRoomsSpan.textContent = `Refresh failed: ${now}`;
-                    refreshStatusAllSpan.textContent = `Refresh failed: ${now}`;
+                    refreshStatusSpan.textContent = `Refresh failed: ${now}`;
                 }
             }
         }
@@ -625,8 +617,7 @@
             if (refreshIntervalId) clearInterval(refreshIntervalId);
             refreshIntervalId = setInterval(() => fetchLights(true), 60000);
             const now = new Date().toLocaleTimeString();
-            refreshStatusRoomsSpan.textContent = `Last refreshed: ${now}`;
-            refreshStatusAllSpan.textContent = `Last refreshed: ${now}`;
+            refreshStatusSpan.textContent = `Last refreshed: ${now}`;
         }
 
 
