@@ -808,7 +808,7 @@
                           </label>
                           <input type="range" data-room-name="${roomName}" min="0" max="100" value="${avgBrightness}" class="w-full h-3 bg-gray-600 rounded-lg appearance-none cursor-pointer room-brightness-slider">
                     </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 mt-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
                         ${lightsInRoom.map(renderLightCard).join('')}
                     </div>
                 </div>
