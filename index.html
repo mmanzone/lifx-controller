@@ -813,7 +813,7 @@
         }
 
         /**
-         * Groups lights by room and displays them.
+         * Groups lights by room and displays them, with a special layout for small rooms.
          */
         function displayRooms() {
             const rooms = ALL_LIGHTS.reduce((acc, light) => {
@@ -825,7 +825,7 @@
                 return acc;
             }, {});
 
-            roomsListDiv.innerHTML = '';
+            roomsListDiv.innerHTML = ''; // Clear existing content
             const sortedRoomNames = Object.keys(rooms).sort();
 
             if (sortedRoomNames.length === 0) {
@@ -833,12 +833,42 @@
                 return;
             }
             noRoomsMessage.classList.add('hidden');
-            
+
+            const largeRooms = [];
+            const smallRooms = [];
+
             sortedRoomNames.forEach(roomName => {
-                roomsListDiv.innerHTML += renderRoomSection(roomName, rooms[roomName]);
+                // Ensure lights are sorted within the room for consistent order
+                const lightsInRoom = rooms[roomName].sort((a, b) => a.label.localeCompare(b.label));
+                if (lightsInRoom.length < 3) {
+                    smallRooms.push({ name: roomName, lights: lightsInRoom });
+                } else {
+                    largeRooms.push({ name: roomName, lights: lightsInRoom });
+                }
             });
 
-            // Add event listeners for room controls
+            let finalHtml = '';
+
+            // Render large rooms, which will be affected by the parent's `space-y-8`
+            largeRooms.forEach(room => {
+                finalHtml += renderRoomSection(room.name, room.lights);
+            });
+
+            // Render small rooms inside a single 2-column grid container
+            if (smallRooms.length > 0) {
+                let smallRoomsHtml = '<div class="grid grid-cols-1 md:grid-cols-2 gap-8">';
+                smallRooms.forEach(room => {
+                    smallRoomsHtml += renderRoomSection(room.name, room.lights);
+                });
+                smallRoomsHtml += '</div>';
+
+                // Add the grid to the final HTML
+                finalHtml += smallRoomsHtml;
+            }
+
+            roomsListDiv.innerHTML = finalHtml;
+            
+            // Add event listeners for all room controls after rendering
             document.querySelectorAll('.room-power-toggle').forEach(btn => {
                 btn.addEventListener('click', () => handleRoomPowerToggle(btn.dataset.roomName));
             });
@@ -856,6 +886,37 @@
              document.querySelectorAll('.room-brightness-slider').forEach(slider => {
                 slider.addEventListener('input', (e) => handleRoomBrightnessChange(e.target.dataset.roomName, e.target.value));
                 slider.addEventListener('change', (e) => handleRoomBrightnessApply(e.target.dataset.roomName, e.target.value));
+            });
+
+            // Add event listeners for the individual light cards rendered within the rooms
+            [...largeRooms, ...smallRooms].forEach(room => {
+                room.lights.forEach(light => {
+                    const card = document.getElementById(`card-${light.id}`);
+                    const slider = document.getElementById(`brightness-slider-${light.id}`);
+                    const colorButton = document.getElementById(`color-button-${light.id}`);
+
+                    if (card && light.connected !== false) {
+                        card.addEventListener('click', (e) => {
+                            if (e.target.closest('input[type="range"]') || e.target.closest('button')) return;
+                            const newPowerState = light.power === 'on' ? 'off' : 'on';
+                            handlePowerToggle(light.id, newPowerState);
+                        });
+                    }
+                    if (slider) {
+                        slider.addEventListener('input', (e) => handleBrightnessChange(light.id, e.target.value));
+                        slider.addEventListener('change', (e) => handleBrightnessApply(light.id, e.target.value));
+                    }
+                    if (colorButton && light.connected !== false) {
+                        colorButton.addEventListener('click', () => {
+                            const currentLight = ALL_LIGHTS.find(l => l.id === light.id);
+                            if (currentLight.power === 'on') {
+                                openColorPicker(currentLight);
+                            } else {
+                                showMessageBox('Light is Off', `Please turn on ${currentLight.label} before setting its colour.`);
+                            }
+                        });
+                    }
+                });
             });
         }
 
